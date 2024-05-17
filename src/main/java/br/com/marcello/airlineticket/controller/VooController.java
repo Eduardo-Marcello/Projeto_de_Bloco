@@ -1,64 +1,74 @@
 package br.com.marcello.airlineticket.controller;
 
 import br.com.marcello.airlineticket.model.Voo;
+import br.com.marcello.airlineticket.service.VooService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/voo")
 public class VooController {
 
-    static List<Voo> voos = initValues();
 
-    private static List<Voo> initValues() {
-        List<Voo> voos = new ArrayList<>();
-        voos.add(new Voo(1, "3456", "Azul", "Bahia", "adiado",
-                LocalDateTime.of(2024, 6, 20, 7, 30),
-                LocalDateTime.of(2024, 6, 20, 10, 20)));
-        voos.add(new Voo(2, "3457", "GO", "Recife", "normal",
-                LocalDateTime.of(2024, 7, 5, 7, 30),
-                LocalDateTime.of(2024, 7, 5, 11, 30)));
+    final VooService vooService;
 
-        return voos;
+    public VooController(VooService vooService) {
+        this.vooService = vooService;
     }
-
-
 
     @GetMapping("/voos")
-    public List<Voo> getAll(){
-        System.out.println("Listando todos os voos");
-        return voos;
-    }
-
-    @GetMapping("/{codigo}")
-    public Voo getVooByCod(@PathVariable String codigo){
-            for(Voo voo : getAll()){
-                if(voo.getCodigo().equals(codigo)){
-                    return voo;
-                }
+    public ResponseEntity<List<Voo>> getAll(@RequestParam(required = false) Optional<String> codigo){
+        if(codigo.isEmpty()){
+            return ResponseEntity.ok(vooService.getAll());
+        } else {
+            List<Voo> voos = vooService.getByCod(codigo.get());
+            if(voos.isEmpty()){
+                return ResponseEntity.notFound().build();
+            } else {
+                return ResponseEntity.ok(voos);
             }
+        }
 
-            return null;
     }
+
+    @GetMapping("/id/{id}")
+    public ResponseEntity<Voo> getById(@PathVariable int id){
+        try {
+            return ResponseEntity.ok(vooService.getById(id));
+        }catch (IllegalArgumentException | IndexOutOfBoundsException ex){
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    /* @GetMapping("/codigo/{codigo}")
+    public ResponseEntity<Voo> getByCod(@PathVariable String codigo){
+        try {
+            return ResponseEntity.ok(vooService.getByCod(codigo));
+        } catch (IllegalArgumentException | IndexOutOfBoundsException ex){
+            return ResponseEntity.notFound().build();
+        }
+    } */
 
     @PostMapping("/save")
     public void save(@RequestBody Voo voo){
-        voos.add(voo);
-        System.out.println(voo);
-        System.out.println("Cadastrando o voo");
+        vooService.save(voo);
+
     }
 
     @PutMapping("/update")
-    public void update(){
+    public void update(@RequestBody Voo voo){
         System.out.println("Atualizando o voo");
     }
 
-    @DeleteMapping("/delete")
-    public void delete(){
-        System.out.println("Deletando o voo");
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Voo> deleteById(@PathVariable int id){
+        try {
+            return ResponseEntity.ok(vooService.deleteById(id));
+        }catch (IllegalArgumentException | IndexOutOfBoundsException ex) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
