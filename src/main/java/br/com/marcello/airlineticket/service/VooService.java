@@ -1,11 +1,13 @@
 package br.com.marcello.airlineticket.service;
 
+import br.com.marcello.airlineticket.exception.ResourceNotFoundException;
 import br.com.marcello.airlineticket.model.Voo;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class VooService {
@@ -24,21 +26,40 @@ public class VooService {
         return voos;
     }
 
+    private boolean resourceNotFound(String code){
+
+        return voos.stream().filter(voo -> Objects.equals(voo.getCodigo(), code)).findFirst().isEmpty() &&
+                !code.matches("[0-9]*") &&
+                code.length() < 4;
+    }
+
+    private int findId(String codigo){
+        int vooId = -1;
+        for (int i = 0; i < voos.size(); i++) {
+            if (voos.get(i).getCodigo().equals(codigo)) {
+                vooId = i;
+                break;
+            }
+        }
+        return vooId;
+    }
+    
+
     public List<Voo> getAll() {
         return this.voos;
     }
 
-    public boolean getId(int id) {
+    /* public boolean getId(int id) {
         if(id <= 0) {
             return false;
         } else {
             return true;
         }
-    }
+    } */
 
     public Voo getById(int id) {
-        if(!getId(id)){
-            throw new IllegalArgumentException("Valor Inválido - Id inexistente!");
+        if(id <= 0){
+            throw new ResourceNotFoundException("Valor Inválido - Id inexistente!");
         } else {
             return this.voos.get(id-1);
         }
@@ -46,10 +67,11 @@ public class VooService {
     }
 
     public List<Voo> getByCod(String codigo){
-        if(!codigo.isEmpty() && codigo.matches("[0-9]*")){
-            return getAll().stream().filter(voo -> voo.getCodigo().startsWith(codigo)).toList();
+        System.out.println(resourceNotFound(codigo));
+        if(resourceNotFound(codigo)){
+            throw new ResourceNotFoundException("Valor Inválido - Codigo inexistente!");
         } else {
-            throw new IllegalArgumentException("Valor Inválido - Codigo inexistente!");
+            return getAll().stream().filter(voo -> voo.getCodigo().startsWith(codigo)).toList();
         }
 
         /*
@@ -66,11 +88,22 @@ public class VooService {
         voos.add(voo);
     }
 
-    public Voo deleteById(int id) {
-        if(!getId(id)){
-            throw new IllegalArgumentException("Valor Inválido - Id inexistente!");
+
+    public void update(String codigo, Voo voo) {
+        if(resourceNotFound(codigo)){
+            throw new ResourceNotFoundException("Voo não encontrado!");
         } else {
-            return getAll().remove(id-1);
+            //int vooId = voos.indexOf(Objects.equals(voo.getCodigo(), codigo));
+            voos.set(findId(codigo), voo);
+        }
+    }
+    
+    public void deleteByCod(String codigo) {
+        if(resourceNotFound(codigo)){
+            throw new ResourceNotFoundException("Voo não encontrado!");
+        } else {
+            voos.remove(voos.get(findId(codigo)));
+            //voos.removeIf(voo -> Objects.equals(voo.getCodigo(), codigo));
         }
 
     }
