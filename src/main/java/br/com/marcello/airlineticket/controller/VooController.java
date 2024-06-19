@@ -4,7 +4,7 @@ import br.com.marcello.airlineticket.exception.ResourceNotFoundException;
 import br.com.marcello.airlineticket.model.Voo;
 import br.com.marcello.airlineticket.payload.MessagePayload;
 import br.com.marcello.airlineticket.repository.VooRepository;
-import br.com.marcello.airlineticket.service.VooServiceOld;
+import br.com.marcello.airlineticket.service.VooService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -20,14 +20,16 @@ import java.util.Optional;
 public class VooController {
 
     Logger logger = LoggerFactory.getLogger(VooController.class);
-    final VooServiceOld vooServiceOld;
     final VooRepository vooRepository;
+    final VooService vooService;
 
-    public VooController(VooServiceOld vooServiceOld, VooRepository vooRepository) {
-        this.vooServiceOld = vooServiceOld;
+    public VooController(VooRepository vooRepository, VooService vooService) {
         this.vooRepository = vooRepository;
+        this.vooService = vooService;
     }
 
+
+/*
     @GetMapping("/voos")
     public ResponseEntity<List<Voo>> getAll(@RequestParam(required = false) Optional<String> codigo){
         if(codigo.isEmpty()){
@@ -59,7 +61,7 @@ public class VooController {
         } catch (IllegalArgumentException | IndexOutOfBoundsException ex){
             return ResponseEntity.notFound().build();
         }
-    } */
+
 
     @PostMapping("/save")
     public void save(@RequestBody Voo voo){
@@ -87,5 +89,5 @@ public class VooController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MessagePayload(ex.getMessage()));
         }
     }
-
+ */
 }

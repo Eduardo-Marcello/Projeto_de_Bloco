@@ -13,21 +13,24 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor@NoArgsConstructor
 @Entity
-@Table(name = "TB_VOO")
+@Table(name = "VOO")
 public class Voo {
     @NotBlank
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @NotBlank @Size(min = 4, max = 10)
     private String codigo;
-    @Column(name = "nome_empresa")
-    private String empresa;
     private String destino;
-    @Column(name = "status_situacao")
-    private String situacao;
-    private LocalDateTime data_hora_partida;
-    private LocalDateTime data_hora_chegada;
-
+    @Column(name = "data_hora_partida")
+    private LocalDateTime dataHoraPartida;
+    @Column(name = "data_hora_chegada")
+    private LocalDateTime dataHoraChegada;
+    @ManyToOne
+    @JoinColumn(name = "status_id")
+    private Situacao situacao;
+    @ManyToOne
+    @JoinColumn(name = "empresa_id")
+    private Empresa empresa;
 
 }
 

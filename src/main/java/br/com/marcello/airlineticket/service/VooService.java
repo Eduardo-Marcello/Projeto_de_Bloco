@@ -1,5 +1,6 @@
 package br.com.marcello.airlineticket.service;
 
+import br.com.marcello.airlineticket.filters.VooFilters;
 import br.com.marcello.airlineticket.model.Voo;
 
 import java.util.List;
@@ -11,4 +12,5 @@ public interface VooService {
     void deleteById(int id);
     void save(Voo voo);
     Voo update(Integer id, Voo vooUpdate);
+    List<Voo> findWithFilters(VooFilters filters);
 }
