@@ -21,5 +21,5 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     List<Usuario> findAllByStatusIn(@Param("statusList") List<Integer> status);
 
     @Query("SELECT u from Usuario u inner join u.roles roles where roles in :roles")
-    List<Usuario> findAllByRoles(@Param("rolesList") List<Role> roles);
+    List<Usuario> findAllByRoles(@Param("roles") List<Role> roles);
 }

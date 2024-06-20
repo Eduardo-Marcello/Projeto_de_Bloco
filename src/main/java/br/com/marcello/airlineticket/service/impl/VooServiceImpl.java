@@ -1,6 +1,8 @@
 package br.com.marcello.airlineticket.service.impl;
 
 import br.com.marcello.airlineticket.filters.VooFilters;
+import br.com.marcello.airlineticket.model.Empresa;
+import br.com.marcello.airlineticket.model.Situacao;
 import br.com.marcello.airlineticket.model.Voo;
 import br.com.marcello.airlineticket.repository.VooRepository;
 import br.com.marcello.airlineticket.service.VooService;
@@ -28,13 +30,13 @@ public class VooServiceImpl implements VooService {
     }
 
     @Override
-    public Optional<Voo> getById(int id) {
+    public Optional<Voo> getById(Long id) {
         return vooRepository.findById(id);
 
     }
 
     @Override
-    public void deleteById(int id) {
+    public void deleteById(Long id) {
         vooRepository.deleteById(id);
     }
 
@@ -44,7 +46,7 @@ public class VooServiceImpl implements VooService {
     }
 
     @Override
-    public Voo update(Integer id, Voo vooUpdate) {
+    public Voo update(Long id, Voo vooUpdate) {
         vooUpdate.setId(id);
         return vooRepository.save(vooUpdate);
     }
@@ -88,8 +90,28 @@ public class VooServiceImpl implements VooService {
            predicates.add(pais);
         }
         cq.where(predicates.toArray(Predicate[]:: new));
-        List<Voo> resultList = entityManager.createQuery(cq).getResultList();
-        return resultList;
+        return entityManager.createQuery(cq).getResultList();
     }
+
+    @Override
+    public List<Voo> findAllNationals() {
+        return vooRepository.findAllNationals();
+    }
+
+    @Override
+    public List<Voo> findAllInternationals() {
+        return vooRepository.findAllInternationals();
+    }
+
+    @Override
+    public List<Voo> findAllStatusNormal(List<Situacao> situacao) {
+        return vooRepository.findAllStatusNormal(situacao);
+    }
+
+    @Override
+    public List<Voo> findbyCode(String code) {
+        return vooRepository.findByCode(code);
+    }
+
 
 }

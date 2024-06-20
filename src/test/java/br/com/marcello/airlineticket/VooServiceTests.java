@@ -54,7 +54,7 @@ public class VooServiceTests {
         vooService.save(voo);
         List<Voo> all = vooService.getAll();
         int estadoInicial = all.size();
-        Voo voo2 = all.get(0);
+        Voo voo2 = all.getFirst();
         vooRepository.deleteById(voo2.getId());
         all = vooService.getAll();
         int estadoFinal = all.size();
@@ -77,7 +77,7 @@ public class VooServiceTests {
         assertTrue(byId.isPresent());
         Optional<Voo> vooInexistente = vooService.getById(10);
         assertTrue(vooInexistente.isEmpty());*/
-        Voo voo = vooService.getById(1).get();
+        Optional<Voo> voo = vooService.getById(1L);
         log.info("Voo: " + voo);
     }
 
